@@ -1,0 +1,20 @@
+{
+  "trial": 29,
+  "batches": 64,
+  "total_labels": 256,
+  "control_correct_labels": 187,
+  "treatment_correct_labels": 190,
+  "control_accuracy": 0.73046875,
+  "treatment_accuracy": 0.7421875,
+  "paired_gain_pp": 1.171875,
+  "initial_truncations": 1,
+  "rescue_calls": 1,
+  "rescues_scored": 1,
+  "rescue_truncations": 0,
+  "improved_batches": 1,
+  "recovered_correct_labels": 3,
+  "blocked_attempts": 0,
+  "other_error_attempts": 0,
+  "invalid_answer_attempts": 0,
+  "added_logical_latency_seconds": 1.875
+}

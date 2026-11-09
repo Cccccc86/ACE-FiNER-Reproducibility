@@ -1,0 +1,19 @@
+## STRATEGIES & INSIGHTS
+
+[sai-00001] helpful=1 harmful=0 :: When selecting an XBRL tag, always prefer the most specific US GAAP element that matches the exact nature of the disclosed amount, rather than a broad or generic tag.
+## FORMULAS & CALCULATIONS
+
+## CODE SNIPPETS & TEMPLATES
+
+## COMMON MISTAKES TO AVOID
+
+[err-00002] helpful=0 harmful=0 :: Do not tag a debt balance described as 'including principal and accrued interest' as LongTermDebt; this is a carrying amount and should use DebtInstrumentCarryingAmount.
+[err-00003] helpful=0 harmful=0 :: Do not tag an ownership percentage acquired by investors in a change-of-control transaction as BusinessAcquisitionPercentageOfVotingInterestsAcquired; if the context is an equity method investment, use EquityMethodInvestmentOwnershipPercentage.
+## PROBLEM-SOLVING HEURISTICS
+
+## CONTEXT CLUES & INDICATORS
+
+[ctx-00004] helpful=0 harmful=0 :: Phrases like 'balance, including principal and accrued interest' indicate a debt carrying amount, so use DebtInstrumentCarryingAmount.
+[ctx-00005] helpful=0 harmful=0 :: Phrases like 'approximately X% of the issued and outstanding shares ... being acquired' by an investor group indicate an equity method investment ownership percentage, so use EquityMethodInvestmentOwnershipPercentage.
+[ctx-00006] helpful=0 harmful=0 :: For share-based compensation disclosures: shares issued from option exercises, RSU vesting, or ESPP purchases map to StockIssuedDuringPeriodSharesNewIssues; shares repurchased and retired map to StockRepurchasedAndRetiredDuringPeriodShares; and the weighted-average grant date fair value per share of options granted maps to ShareBasedCompensationArrangementByShareBasedPaymentAwardOptionsGrantsInPeriodWeightedAverageGrantDateFairValue.
+## OTHERS

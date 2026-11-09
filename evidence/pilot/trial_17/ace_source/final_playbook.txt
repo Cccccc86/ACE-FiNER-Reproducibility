@@ -1,0 +1,20 @@
+## STRATEGIES & INSIGHTS
+
+[sai-00001] helpful=0 harmful=0 :: When tagging an ownership percentage, determine whether the transaction is a business combination (acquirer obtains control of a business) or an equity investment (investor acquires shares without acquiring a business). If the percentage reflects investors acquiring shares in the company (even with a 'change in control'), use EquityMethodInvestmentOwnershipPercentage rather than BusinessAcquisitionPercentageOfVotingInterestsAcquired.
+[sai-00004] helpful=0 harmful=0 :: When tagging share counts from equity plans, distinguish the transaction type: shares issued from stock option exercises, RSU vesting, or ESPP purchases should use StockIssuedDuringPeriodSharesNewIssues; shares repurchased and retired should use StockRepurchasedAndRetiredDuringPeriodShares. Do not use the same tag for issuance and repurchase/retirement even if both appear in the same filing.
+## FORMULAS & CALCULATIONS
+
+## CODE SNIPPETS & TEMPLATES
+
+## COMMON MISTAKES TO AVOID
+
+[err-00002] helpful=0 harmful=0 :: Do not automatically tag ownership percentages as BusinessAcquisitionPercentageOfVotingInterestsAcquired just because the text mentions 'change in control' or 'acquired'. Verify whether a business combination occurred; if the transaction is an investment in the entity's shares by an investor group, the correct tag is EquityMethodInvestmentOwnershipPercentage.
+[err-00005] helpful=0 harmful=0 :: Do not tag a share count as StockIssuedDuringPeriodSharesNewIssues when the sentence describes shares repurchased and retired (e.g., 'repurchased and retired ... shares of our common stock'). Repurchases/retirements require StockRepurchasedAndRetiredDuringPeriodShares, not an issuance tag.
+## PROBLEM-SOLVING HEURISTICS
+
+## CONTEXT CLUES & INDICATORS
+
+[ctx-00003] helpful=0 harmful=0 :: Cues that an ownership percentage should be tagged as EquityMethodInvestmentOwnershipPercentage: the sentence describes investors (e.g., 'accredited investors', a named holding company) acquiring issued and outstanding shares of the company, often alongside a 'change in control' or new business plan, rather than an acquirer purchasing a separate business entity.
+[ctx-00006] helpful=0 harmful=0 :: Cues that a per-share dollar amount should be tagged as ShareBasedCompensationArrangementByShareBasedPaymentAwardOptionsGrantsInPeriodWeightedAverageGrantDateFairValue: the sentence mentions 'weighted-average grant date fair value per share of options granted' and provides a dollar amount per share for a period. This is distinct from exercise price or grant date intrinsic value tags.
+[ctx-00007] helpful=0 harmful=0 :: Cues that a share count should be tagged as StockIssuedDuringPeriodSharesNewIssues: the sentence describes shares 'issued' from stock option exercises, vesting of restricted stock units (RSUs), or employee stock purchase plan (ESPP) purchases, often net of employee payroll taxes. The presence of 'issued' plus equity-plan sources signals new share issuance.
+## OTHERS

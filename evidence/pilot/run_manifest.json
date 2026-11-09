@@ -1,0 +1,35 @@
+{
+  "upstream_commit": "82709de050e1db6e6ef2f07bcb0393560b94992a",
+  "run_id": "3d259fdf52ae495badadb3273c82ae02",
+  "model": "deepseek-flash",
+  "base_url": "https://api.deepseek.com",
+  "temperature": 0,
+  "thinking": "disabled",
+  "json_mode": true,
+  "pilot": true,
+  "scope": "compact",
+  "seeds": [
+    17
+  ],
+  "train_order": {
+    "17": [
+      "finer:train:000420",
+      "finer:train:000108"
+    ]
+  },
+  "validation_ids": [
+    "finer:val:000086",
+    "finer:val:000149"
+  ],
+  "test_ids": [
+    "finer:test:000286",
+    "finer:test:000265"
+  ],
+  "max_num_rounds": 3,
+  "max_output_tokens": 1536,
+  "max_input_tokens": 32000,
+  "budget_cny": 50,
+  "fit_workers": 6,
+  "eval_workers": 12,
+  "ledger": "evidence/deepseek_ledger.jsonl"
+}

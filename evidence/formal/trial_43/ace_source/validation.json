@@ -1,0 +1,15 @@
+{
+  "accuracy": 0.71875,
+  "correct_labels": 23,
+  "total_labels": 32,
+  "requested_batches": 8,
+  "scored_batches": 8,
+  "invalid_answer_batches": 0,
+  "error_batches": 0,
+  "blocked_batches": 0,
+  "missing_positions": 0,
+  "extra_position_batches": 0,
+  "batch_exact_accuracy": 0.375,
+  "seconds": 4.295999999972992,
+  "playbook_sha256": "7a27f4fefb3daf5c7dc2defb5631aa1de54b32ddf79655f9da72940e591cb2b3"
+}

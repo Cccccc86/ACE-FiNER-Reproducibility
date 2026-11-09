@@ -1,0 +1,14 @@
+{"time": 1794218654.8334622, "trial": 17, "arm": "base", "event": "test_started"}
+{"time": 1794218656.6903734, "trial": 17, "arm": "base", "event": "arm_finished", "accuracy": 0.75, "error_batches": 0}
+{"time": 1794218656.6924818, "trial": 17, "arm": "ace_upstream", "event": "training_started"}
+{"time": 1794218656.6935344, "trial": 17, "arm": "ace_source", "event": "training_started"}
+{"time": 1794218668.3823447, "trial": 17, "arm": "ace_upstream", "event": "training_step", "step": 1, "status": "complete"}
+{"time": 1794218669.7670405, "trial": 17, "arm": "ace_source", "event": "training_step", "step": 1, "status": "complete"}
+{"time": 1794218676.8493733, "trial": 17, "arm": "ace_upstream", "event": "training_step", "step": 2, "status": "complete"}
+{"time": 1794218676.85176, "trial": 17, "arm": "ace_upstream", "event": "validation_started"}
+{"time": 1794218678.9696016, "trial": 17, "arm": "ace_upstream", "event": "test_started", "selected_checkpoint": "final"}
+{"time": 1794218680.8807695, "trial": 17, "arm": "ace_upstream", "event": "arm_finished", "accuracy": 0.75, "error_batches": 0}
+{"time": 1794218681.0351977, "trial": 17, "arm": "ace_source", "event": "training_step", "step": 2, "status": "complete"}
+{"time": 1794218681.0362008, "trial": 17, "arm": "ace_source", "event": "validation_started"}
+{"time": 1794218682.776482, "trial": 17, "arm": "ace_source", "event": "test_started", "selected_checkpoint": "final"}
+{"time": 1794218684.495291, "trial": 17, "arm": "ace_source", "event": "arm_finished", "accuracy": 0.875, "error_batches": 0}

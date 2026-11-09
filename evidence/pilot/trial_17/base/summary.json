@@ -1,0 +1,20 @@
+{
+  "trial": 17,
+  "arm": "base",
+  "test": {
+    "accuracy": 0.75,
+    "correct_labels": 6,
+    "total_labels": 8,
+    "requested_batches": 2,
+    "scored_batches": 2,
+    "invalid_answer_batches": 0,
+    "error_batches": 0,
+    "blocked_batches": 0,
+    "missing_positions": 0,
+    "extra_position_batches": 0,
+    "batch_exact_accuracy": 0.5,
+    "seconds": 1.8599999999860302,
+    "playbook_sha256": "d0e7d0049bd539630f51db8d08fdff170ea2882267c960fbe843bede303e2249"
+  },
+  "status": "complete"
+}

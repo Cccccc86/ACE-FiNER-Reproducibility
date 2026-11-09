@@ -1,0 +1,2 @@
+# Preserve the source bytes checked by the frozen FiNER manifest.
+eval/finance/data/*.jsonl -text

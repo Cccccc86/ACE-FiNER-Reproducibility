@@ -1,367 +1,97 @@
-# Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models
+# ACE on FiNER
 
-<div align="left">
+This project contains a partial reproduction of ACE's offline FiNER comparison and an experiment that gives the Curator the source sentences. FiNER asks for four US GAAP tags per batch, one for each entity in a financial statement excerpt.
 
-<p align="left" style="display:flex; gap:18px;">
-  <a href="https://arxiv.org/abs/2510.04618" target="_blank" style="margin-right:0;">
-    <img alt="arXiv" src="https://img.shields.io/badge/arXiv-2510.04618-b31b1b.svg">
-  </a>
-  <a href="https://join.slack.com/t/ace-agent/shared_invite/zt-3np7gusuf-DCUJaBshNjuAz5ECDx702w" target="_blank" style="margin-right:0;">
-    <img alt="Slack" src="https://img.shields.io/badge/Join Slack-4A154B?logo=slack&logoColor=white">
-  </a>
-  <a href="https://discord.gg/NW2W4xYt" target="_blank" style="margin-right:0;">
-    <img alt="Discord" src="https://img.shields.io/badge/Discord-7289DA?logo=discord&logoColor=white">
-  </a>
-  <a href="https://deepwiki.com/ace-agent/ace" target="_blank" style="margin-right:0;">
-    <img alt="Ask DeepWiki" src="https://deepwiki.com/badge.svg">
-  </a>
-  <a href="https://forms.gle/ZNJpqVBRa8QoPjzM7" target="_blank" style="margin-right:0;">
-    <img alt="Feedback & Interest Form" src="https://img.shields.io/badge/Feedback & Interest Form-4285F4?logo=googleforms&logoColor=white">
-  </a>
-</p>
+Table 2 of the paper reports **70.7%** tag accuracy for the base model and **78.3%** for offline ACE with training labels. The paper used DeepSeek-V3.1-671B. This run uses hosted `deepseek-flash` on a smaller frozen subset, so those percentages are reference values for the original setup. [ACE paper, Table 2](https://arxiv.org/html/2510.04618v3#S4.T2)
 
+## Study design
 
-<img src="assets/images/ace_framework.png" alt="ACE Framework" width="800"/>
+| Arm | What the Generator uses at test time |
+|---|---|
+| `base` | Empty playbook, with no adaptation |
+| `ace_upstream` | Playbook learned with the released FiNER context route |
+| `ace_source` | Playbook learned with the four training questions and source sentences supplied to the Curator |
 
-</div>
+The released FiNER parser puts each numbered question and its source sentence in `question`. It leaves `context` empty, and the Curator's Question Context field receives that empty value. The treatment fills only that field. Its evidence contains the numbered questions and sentences, with the repeated candidate menu and final output cue removed. The original Reflector still receives the training labels through the same route in both ACE arms. [Upstream parser](https://github.com/ace-agent/ace/blob/82709de050e1db6e6ef2f07bcb0393560b94992a/eval/finance/data_processor.py#L31-L46), [upstream Curator call](https://github.com/ace-agent/ace/blob/82709de050e1db6e6ef2f07bcb0393560b94992a/ace/ace.py#L578-L597)
 
----
+The formal **compact** scope has **12 training, 8 validation and 48 test batches**. The three paired trials use seeds **17, 29 and 43**. Within each trial the two ACE arms share the training order, validation and test sets, three-round reflection limit and one Curator update opportunity per training batch. Each arm starts from a fresh playbook. Validation evaluates the end-of-training checkpoint and selects it if its accuracy exceeds zero, following the released selection rule with one checkpoint. The seeds determine local ordering. Hosted inference can vary across requests.
 
-## 🎯 Overview
+[The split manifest](finer_manifest.json) records the source and row SHA-256 hashes. Selection ranks the released rows by a fixed hash, excludes sentences shared between source splits after Unicode and whitespace normalization, and reserves the pilot first. The **2/2/2** pilot uses separate sentences and is kept out of the formal trials. Validation and test labels stay in the scorer.
 
-ACE (Agentic Context Engineering) is a framework that enables large language models to self-improve by treating contexts as evolving playbooks that accumulate, refine, and organize strategies through a modular process of generation, reflection, and curation. Unlike traditional approaches that suffer from **brevity bias** and **context collapse**, ACE introduces structured, incremental updates guided by a grow-and-refine principle, preserving detailed, domain-specific knowledge while remaining comprehensive and scalable throughout adaptation.
+## Measured results
 
-## Latest News
-- **2025 Nov**: ACE [Paper](https://arxiv.org/abs/2510.04618) and Repo says "Hello World"!
+| Arm | Mean tag accuracy | Sample SD across trials |
+|---|---:|---:|
+| `base` | 75.69% | 1.31 pp |
+| `ace_upstream` | 74.83% | 4.67 pp |
+| `ace_source` | 71.18% | 1.59 pp |
 
-### Key Features
+The paired mean differences were **−0.87 percentage points** for upstream ACE against the base model and **−3.65 percentage points** for source-context ACE against upstream ACE. Nine held-out batches hit the output cap. Their four positions remained in the primary denominator and earned zero correct tags. The three trials concern this fixed subset and hosted configuration. [Formal summary](evidence/formal/summary.json)
 
-- 🔄 **Three-Role Agentic Architecture**: Generator, Reflector, and Curator work together to continuously improve contexts
-- 📈 **Incremental Delta Updates**: Localized edits that preserve prior knowledge while accumulating new insights
-- 🎓 **Self-Supervised Learning**: Adapts effectively without labeled supervision by leveraging natural execution feedback
-- 🚀 **High Efficiency**: 86.9% lower adaptation latency on average compared to existing adaptive methods
-- 💰 **Cost Effective**: Significantly fewer rollouts and lower dollar costs while achieving higher accuracy
+The evidence folder contains the run manifests, per-batch scores, training traces, checkpoints and shared usage ledger. There were **808 formal** and **28 pilot** requests. The ledger estimates **¥3.67** combined at peak CNY rates. [Pilot summary](evidence/pilot/summary.json) · [Formal evidence](evidence/formal/) · [Shared ledger](evidence/deepseek_ledger.jsonl)
 
-### Tutorials
-- 📚 **Adding Dataset for Evaluation** [Link](tutorials/ExtendingDatasets.md)
-- ✨ **Extending ACE for Tool Calling** (Coming Soon) 
+## Setup on Windows
 
-### 📊 Performance
+Run PowerShell from this project directory with Python **3.12**. If `python` points to a different interpreter, substitute the full path to your Python 3.12 executable. The four direct dependencies are pinned in [requirements-repro.txt](requirements-repro.txt).
 
-ACE consistently outperforms strong baselines, achieving average gains of **+10.6%** on agent tasks and **+8.6%** on domain-specific benchmarks, across both offline and online adaptation settings.
-
-#### Benchmarks
-
-| Task Category | Dataset | Improvement | Details |
-|---------------|---------|-------------|---------|
-| **Agent Tasks** | AppWorld | +10.6% | Matches top-ranked production-level agent (GPT-4.1) on average and surpasses it on harder test-challenge split, using smaller open-source model |
-| **Finance** | FiNER + XBRL Formula | +8.6% | Domain-specific reasoning with structured information extraction |
-
-#### Efficiency Improvements
-
-- **Offline (AppWorld)**: -82.3% latency and -75.1% rollouts vs GEPA
-- **Online (FiNER)**: -91.5% latency and -83.6% token cost vs Dynamic Cheatsheet
-
-
-#### How It Works
-
-1. **Generator** produces reasoning trajectories for new queries, surfacing both effective strategies and recurring pitfalls
-2. **Reflector** separates evaluation and insight extraction from curation, improving context quality
-3. **Curator** converts lessons into structured delta updates with helpful/harmful counters, using deterministic merging with de-duplication and pruning
-
-This design prevents the **context collapse** problem where iterative rewriting erodes details over time.
-
-## 🚀 Quick Start
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/ace-agent/ace.git
-cd ace
-
-# Install uv (if not already installed)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Install ACE and core dependencies
-uv sync
-
-# Set up API keys
-cp .env.example .env
-# Edit .env and set the API key(s) you need
+```powershell
+python -m venv .venv
+$python = '.\.venv\Scripts\python.exe'
+& $python --version
+& $python -m pip install -r requirements-repro.txt
 ```
 
-### Basic Usage
+ACE initializes the `cl100k_base` tokenizer when its utilities are imported. Run the following once in the same PowerShell session to populate the cache. On first use `tiktoken` downloads and checks the public vocabulary file. For an installation without access to that host, create the cache on a connected machine, copy the cache directory, and point `TIKTOKEN_CACHE_DIR` to the copy. [Tokenizer source](https://github.com/openai/tiktoken/blob/0.14.0/tiktoken_ext/openai_public.py)
 
-```python
-from ace import ACE
-from utils import initialize_clients
+```powershell
+$env:TIKTOKEN_CACHE_DIR = Join-Path (Get-Location).Path '.venv\tiktoken-cache'
+& $python -c "import tiktoken; print(tiktoken.get_encoding('cl100k_base').name)"
+```
 
-# Initialize API clients
-api_provider = "sambanova" # or "together", "openai", "commonstack"
+## Run
 
-# Initialize ACE system
-ace_system = ACE(
-    api_provider=api_provider,
-    generator_model="DeepSeek-V3.1",
-    reflector_model="DeepSeek-V3.1",
-    curator_model="DeepSeek-V3.1",
-    max_tokens=4096
+Dry runs validate the split manifest and print the logical call limit before retries. They need only Python.
+
+```powershell
+& $python run_finer.py --dry-run --pilot --scope compact
+& $python run_finer.py --dry-run --scope compact --seeds 17 29 43
+```
+
+The pilot should report **46** logical calls at most. The compact formal dry run should report **1,128** across the three trials.
+
+For live runs, supply `DEEPSEEK_API_KEY` in the current process environment or store `DEEPSEEK_API_KEY=your_key_here` in a private file outside the project and use `--env-file`. If the key is already in your environment, omit `--env-file`. The commands below use a CNY-billed account with one shared **¥50** ledger for the pilot and formal run. Use a fresh output directory each time and keep the same ledger for both runs.
+
+```powershell
+$keyFile = 'C:\private\ace-deepseek.env'
+$ledger = '.\runs\deepseek_ledger.jsonl'
+$shared = @(
+    '--scope', 'compact', '--ledger', $ledger, '--budget-cny', '50',
+    '--max-attempts', '2000', '--max-input-tokens', '32000',
+    '--max-output-tokens', '1536', '--fit-workers', '6', '--eval-workers', '12'
 )
 
-# Prepare configuration
-config = {
-    'num_epochs': 1,
-    'max_num_rounds': 3,
-    'curator_frequency': 1,
-    'eval_steps': 100,
-    'online_eval_frequency': 15,
-    'save_steps': 50,
-    'playbook_token_budget': 80000,
-    'task_name': 'your_task',
-    'json_mode': False,
-    'no_ground_truth': False,
-    'save_dir': './results',
-    'test_workers': 20,
-    'use_bulletpoint_analyzer': false,
-    'api_provider': api_provider
+& $python run_finer.py @shared --pilot --seeds 17 --output-dir .\runs\pilot --env-file $keyFile
 
-}
-
-# Offline adaptation
-results = ace_system.run(
-    mode='offline',
-    train_samples=train_data,
-    val_samples=val_data,
-    test_samples=test_data,  # Optional
-    data_processor=processor,
-    config=config
-)
-
-# Online adaptation
-results = ace_system.run(
-    mode='online',
-    test_samples=test_data,
-    data_processor=processor,
-    config=config
-)
-
-# Evaluation only
-results = ace_system.run(
-    mode='eval_only',
-    test_samples=test_data,
-    data_processor=processor,
-    config=config
-)
+& $python run_finer.py @shared --seeds 17 29 43 --output-dir .\runs\formal --env-file $keyFile
 ```
 
-## 💼 Finance Domain Example
+Run the pilot first and review its outputs and reserved usage before launching the formal command. The commands reproduce the pilot and formal settings, including a **32,000-token input bound**, a **1,536-token output cap**, six fit workers and 12 evaluation workers. All three arms use temperature zero, thinking disabled and JSON mode at `https://api.deepseek.com`. The shared ledger uses peak CNY rates for its estimates and retains reservations when usage is unknown. Use the provider dashboard for the billed amount. [DeepSeek pricing](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)
 
-### Training Script Usage
+## Read the run outputs
 
-The `finance/run.py` script provides a unified interface for training and evaluation on financial analysis tasks.
+| Path relative to a run directory | Contents |
+|---|---|
+| `run_manifest.json` | Model, decoding settings, token caps, ordered training IDs and held-out IDs |
+| `summary.json` | Per-trial and per-arm scores, mean and sample standard deviation, paired differences in percentage points and usage by phase |
+| `progress.jsonl` | Incremental run events and interruptions |
+| `trial_<seed>/<arm>/test.jsonl` and `test.json` | Per-batch predictions and aggregate metrics |
+| `trial_<seed>/<ACE arm>/training_rows.jsonl` and `validation.jsonl` | Training updates and validation predictions |
+| `trial_<seed>/<ACE arm>/final_playbook.txt` and `selected_playbook.txt` | Learned playbook and the checkpoint used at test time |
 
-```bash
-# Offline training (with automatic initial and final testing)
-uv run python -m eval.finance.run \
-    --task_name finer \
-    --mode offline \
-    --save_path results
+Read `runs/pilot/summary.json` and `runs/formal/summary.json` separately. Use `complete_trial_seeds` and the per-arm error and invalid-answer counts to check coverage before comparing arms. The primary metric divides the number of correct tag positions by **192** in each formal arm and trial. Failed and missing positions stay in the denominator. All-four-correct batch accuracy is reported separately.
 
-# Online training and testing
-uv run python -m eval.finance.run \
-    --task_name finer \
-    --mode online \
-    --save_path results
+## Code provenance
 
-# Run evaluation on the test split only. Provide a pre-trained playbook or leave initial_playbook_path empty to evaluate an uninitialized playbook.
-uv run python -m eval.finance.run \
-    --task_name finer \
-    --mode eval_only \
-    --initial_playbook_path results/ace_run_TIMESTAMP_finer_offline/best_playbook.txt \
-    --save_path test_results
+The first local commit imports the extracted source archive at upstream commit `82709de050e1db6e6ef2f07bcb0393560b94992a`. The original Python files and prompts match that snapshot. The study uses `finer_data.py` for frozen inputs, `finer_api.py` for hosted requests and usage, and `run_finer.py` for the paired experiment. [Upstream README](README_UPSTREAM.md) · [Pinned ACE source](https://github.com/ace-agent/ace/tree/82709de050e1db6e6ef2f07bcb0393560b94992a)
 
-# Training with custom configuration
-uv run python -m eval.finance.run \
-    --task_name finer \
-    --mode offline \
-    --save_path results \
-    --num_epochs 3 \
-    --eval_steps 100 \
-    --max_tokens 4096
-```
-
-#### Available Arguments
-<details>
-<summary>Click here to see available arguments</summary>
-
-| Argument | Description | Default |
-|----------|-------------|---------|
-| `--task_name` | Task to train on (e.g., `finer`, `formula`) | Required |
-| `--save_path` | Directory to save results | Required |
-| `--initial_playbook_path` | Path to initial playbook | Optional |
-| `--mode` | Run mode: 'offline' for offline training with validation, 'online' for online training and testing on test split, 'eval_only' for evaluation only | `offline` |
-| `--api_provider` | API provider for LLM calls. Choose from ['sambanova', 'together', 'openai', 'commonstack'] | `sambanova` |
-| `--num_epochs` | Number of training epochs | 1 |
-| `--max_num_rounds` | Max reflection rounds for incorrect answers | 3 |
-| `--curator_frequency` | Run curator every N steps | 1 |
-| `--eval_steps` | Evaluate every N steps | 100 |
-| `--online_eval_frequency` | Update playbook every N samples for evaluation in online mode | 15 |
-| `--save_steps` | Save intermediate playbooks every N steps | 50 |
-| `--max_tokens` | Maximum tokens for LLM responses | 4096 |
-| `--playbook_token_budget` | Total token budget for playbook | 80000 |
-| `--test_workers` | Number of parallel workers for testing | 20 |
-| `--generator_model` | Model for generator | `DeepSeek-V3.1` |
-| `--reflector_model` | Model for reflector | `DeepSeek-V3.1` |
-| `--curator_model` | Model for curator | `DeepSeek-V3.1` |
-| `--json_mode` | Enable JSON mode for structured output | False |
-| `--no_ground_truth` | Don't use ground truth in reflection | False |
-| `--use_bulletpoint_analyzer` | Enable bulletpoint analyzer for playbook deduplication and merging | False |
-| `--bulletpoint_analyzer_threshold` | Similarity threshold for bulletpoint analyzer (0-1) | 0.9 |
-
-</details>
-
-## 📈 Results and Outputs
-
-Using offline training as an example, after training, ACE generates:
-
-```
-results/
-└── ace_run_TIMESTAMP_finer_offline/
-    ├── run_config.json                # Training configuration
-    ├── final_results.json             # Consolidated results from all stages
-    ├── initial_test_results.json      # Initial test results with empty playbook (baseline)
-    ├── final_test_results.json        # Final test results with best playbook
-    ├── train_results.json             # Training results
-    ├── val_results.json               # Validation results and error logs
-    ├── pre_train_post_train_results.json     # Detailed pre-train and post-train generator output for each training sample
-    ├── final_playbook.txt             # Final evolved context
-    ├── best_playbook.txt              # Best performing context (only for offline training)
-    ├── bullet_usage_log.jsonl         # Bullet usage tracking
-    ├── curator_operations_diff.jsonl  # Curator operation tracking
-    ├── detailed_llm_logs/             # Detailed LLM call logs
-    └── intermediate_playbooks/        # Intermediate playbooks 
-```
-
-### Understanding Playbook Format
-
-The evolved context (playbook) follows this structure:
-
-```
-## STRATEGIES & INSIGHTS
-[str-00001] helpful=5 harmful=0 :: Always verify data types before processing
-[str-00002] helpful=3 harmful=1 :: Consider edge cases in financial data
-
-## FORMULAS & CALCULATIONS
-[cal-00003] helpful=8 harmful=0 :: NPV = Σ(Cash Flow / (1+r)^t)
-
-## COMMON MISTAKES TO AVOID
-[mis-00004] helpful=6 harmful=0 :: Don't forget timezone conversions
-```
-
-Each bullet has:
-- **ID**: `[section_slug-00000]` for tracking
-- **Counts**: `helpful=X harmful=Y` updated by Reflector
-- **Content**: `:: actual advice or strategy`
-
-<!-- ## 🎓 Key Innovations
-
-### 1. Incremental Delta Updates
-
-Instead of rewriting full prompts, ACE performs delta updates—localized edits that accumulate new insights while preserving prior knowledge.
-
-### 2. Grow-and-Refine Mechanism
-
-A mechanism that balances steady context expansion with redundancy management by merging or pruning context items based on semantic similarity.
-
-### 3. Dedicated Reflector
-
-A specialized Reflector that separates evaluation and insight extraction from curation, improving context quality and downstream performance. -->
-
-### 📬 Supported Tasks
-#### Agent Tasks
-- **AppWorld**: Simulated digital environment with app interactions
-#### Domain-Specific Tasks
-- **FiNER**: Financial information extraction
-- **XBRL Formula**: Structured financial data processing
-
-## 🛠️ Extending ACE
-
-ACE is designed to be easily extended to new tasks and domains. To add your own task:
-
-1. **Prepare your data**: Create JSONL files with train/val/test splits
-2. **Implement DataProcessor**: Only 3 methods needed - `process_task_data()`, `answer_is_correct()`, `evaluate_accuracy()`
-3. **Create training script**: Initialize ACE and run training using the `run()` method
-4. **Customize prompts** (optional): Adapt prompts to your domain
-
-The evaluation orchestration (parallel test execution, result aggregation) is handled by reusable utilities in `utils.py`, so you only need to focus on task-specific logic.
-
-### Quick Example
-
-```python
-class DataProcessor:
-    def process_task_data(self, raw_data):
-        # Convert your data format to standardized format
-        return [{"context": ..., "question": ..., "target": ..., "others": {...}}]
-    
-    def answer_is_correct(self, predicted, ground_truth):
-        # Your comparison logic
-        return predicted.strip() == ground_truth.strip()
-    
-    def evaluate_accuracy(self, predictions, ground_truths):
-        # Calculate accuracy
-        return sum(self.answer_is_correct(p, g) for p, g in zip(predictions, ground_truths)) / len(predictions)
-```
-📖 **[Read the full extension guide →](EXTENDING_ACE.md)**
-
-
-## 🤝 Contributing
-We welcome contributions! Please follow these steps:
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-
-## 📚 Additional Resources
-- **Blog Posts**: 
-  - [Medium: Agentic Context Engineering](https://medium.com/@bingqian/agentic-context-engineering-teaching-language-models-to-learn-from-experience-706c31a872ca)
-  - [MarkTechPost Coverage](https://www.marktechpost.com/2025/10/10/agentic-context-engineering-ace-self-improving-llms-via-evolving-contexts-not-fine-tuning/)
-  - [InfoQ Article](https://www.infoq.com/news/2025/10/agentic-context-eng/)
-
-### 🙏 Acknowledgments
-This work builds upon insights from Dynamic Cheatsheet and incorporates ideas from the broader LLM agent and context optimization research community.
-
-### 📧 Contact
-For questions and feedback:
-- **Paper Authors**: See [arXiv paper](https://arxiv.org/abs/2510.04618) for author contact information
-- **Issues**: Please open an issue on GitHub
-- **Discussions**: Join the [GitHub Discussions](../../discussions)
-
----
-
-
-## 📝 Citation
-
-If you use ACE in your research, please cite our paper:
-
-```bibtex
-@misc{zhang2025agenticcontextengineeringevolving,
-      title={Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models}, 
-      author={Qizheng Zhang and Changran Hu and Shubhangi Upasani and Boyuan Ma and Fenglu Hong and Vamsidhar Kamanuru and Jay Rainton and Chen Wu and Mengmeng Ji and Hanchen Li and Urmish Thakker and James Zou and Kunle Olukotun},
-      year={2025},
-      eprint={2510.04618},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2510.04618}, 
-}
-```
-
-<div align="center">
-
-**⭐ Star us on GitHub if ACE helps your research!**
-
-Made with ❤️ by the ACE team
-
-</div>
+The measured run applied the intervention through a per-instance wrapper around `Curator.curate`, as the packaged runner does. A temporary fallback hook in the working copy of `ace/ace.py` stayed at its default during the measured run. The package restores that file to the pinned bytes. The upstream arm supplies the released empty Curator context, and the treatment wrapper inserts the same frozen evidence at the call boundary. A rerun reproduces those two request routes, with the possibility of variation in individual hosted responses. [Runner](run_finer.py)

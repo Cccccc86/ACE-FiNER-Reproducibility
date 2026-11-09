@@ -1,0 +1,5 @@
+# Direct dependencies for the FiNER runner on Python 3.12.
+openai==3.46.0
+numpy==2.3.5
+python-dotenv==1.2.4
+tiktoken==0.14.0

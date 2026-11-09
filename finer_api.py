@@ -55,6 +55,13 @@ class ProviderRequestError(RuntimeError):
         super().__init__(f"DeepSeek {kind}{status}")
 
 
+class TruncatedCompletion(ProviderRequestError):
+    """The provider explicitly reported finish_reason=length."""
+
+    def __init__(self):
+        super().__init__("completion reached its output limit")
+
+
 @contextmanager
 def request_scope(**metadata):
     """Add experiment identifiers to ledger events in the current thread.
@@ -426,6 +433,8 @@ def ace_timed_llm_call(
     choices = _field(response, "choices") or []
     content = _field(_field(choices[0], "message"), "content") if choices else None
     finish_reason = _field(choices[0], "finish_reason") if choices else None
+    if finish_reason == "length":
+        raise TruncatedCompletion()
     if not isinstance(content, str) or not content.strip():
         raise ProviderRequestError("response was blank")
     if finish_reason not in (None, "stop"):

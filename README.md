@@ -30,6 +30,30 @@ The paired mean differences were **−0.87 percentage points** for upstream ACE 
 
 The evidence folder contains the run manifests, per-batch scores, training traces, checkpoints and shared usage ledger. There were **808 formal** and **28 pilot** requests. The ledger estimates **¥3.67** combined at peak CNY rates. [Pilot summary](evidence/pilot/summary.json) · [Formal evidence](evidence/formal/) · [Shared ledger](evidence/deepseek_ledger.jsonl)
 
+## Output-cap follow-up
+
+The primary follow-up evaluated 64 additional FiNER batches with each of the three frozen upstream ACE checkpoints. The [follow-up manifest](rescue_manifest.json) records the selected rows. Both conditions share one initial completion at 1,536 output tokens. The retry policy makes one fresh request at 3,072 tokens only after `finish_reason=length`, using the same prompt, playbook and decoding settings. An unresolved batch keeps four label positions in the denominator.
+
+| Trial | Control tag accuracy | Retry-policy tag accuracy | Gain |
+|---|---:|---:|---:|
+| 17 | 194/256 (75.78%) | 194/256 (75.78%) | 0.00 pp |
+| 29 | 187/256 (73.05%) | 190/256 (74.22%) | +1.17 pp |
+| 43 | 194/256 (75.78%) | 194/256 (75.78%) | 0.00 pp |
+| Mean | 74.87% | 75.26% | +0.39 pp |
+
+One of 192 initial completions hit the cap. Its retry recovered three correct labels in 1.88 seconds at an estimated **¥0.0020** in peak-priced usage. The mean paired gain was **0.39 pp** with a sample SD of **0.68 pp**. This small gain rests on one batch, so a larger held-out sample would be needed to estimate how often the policy helps. [Primary follow-up summary](evidence/rescue/summary.json)
+
+The post-hoc diagnostic selected the nine formal test attempts and one primary follow-up attempt that previously hit the 1,536-token cap. Each of the ten row/checkpoint cases was replayed three times at each cap, for 30 paired observations. The archived cases include repeated rows under different trials or checkpoints.
+
+| Output cap | Correct tags | Accuracy on selected cases | Truncated completions |
+|---|---:|---:|---:|
+| 1,536 | 65/120 | 54.17% | 10/30 |
+| 3,072 | 78/120 | 65.00% | 5/30 |
+
+The larger cap won nine pairs, tied 15 and lost six. The comparison describes a set selected for past truncation. The repeated rows and purposive selection limit generalization to the wider test set. [Diagnostic summary](evidence/rescue_diagnostic/summary.json)
+
+The cumulative ledger covers **1,089 attempts** with an estimated **¥4.79** at peak CNY rates across the original and follow-up stages. The original evidence ledger remains the 836-attempt snapshot. The combined ledger includes those exact bytes followed by the primary and diagnostic records. [Combined ledger](evidence/deepseek_ledger_combined.jsonl)
+
 ## Setup on Windows
 
 Run PowerShell from this project directory with Python **3.12**. If `python` points to a different interpreter, substitute the full path to your Python 3.12 executable. The four direct dependencies are pinned in [requirements-repro.txt](requirements-repro.txt).
@@ -77,6 +101,29 @@ $shared = @(
 
 Run the pilot first and review its outputs and reserved usage before launching the formal command. The commands reproduce the pilot and formal settings, including a **32,000-token input bound**, a **1,536-token output cap**, six fit workers and 12 evaluation workers. All three arms use temperature zero, thinking disabled and JSON mode at `https://api.deepseek.com`. The shared ledger uses peak CNY rates for its estimates and retains reservations when usage is unknown. Use the provider dashboard for the billed amount. [DeepSeek pricing](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)
 
+### Run the output-cap follow-up
+
+From the repository root, verify the archived inputs and worst-case request plans. The diagnostic needs `evidence/deepseek_ledger_combined.jsonl` to identify the formal and primary follow-up truncations.
+
+```powershell
+& $python run_rescue.py --dry-run --checkpoints-dir .\evidence\formal --workers 12
+& $python run_rescue_diagnostic.py --dry-run --formal-dir .\evidence\formal --rescue-dir .\evidence\rescue --ledger .\evidence\deepseek_ledger_combined.jsonl --workers 12
+```
+
+The dry runs should report 192 initial calls with up to 192 cap-triggered retries for the primary follow-up, and 60 logical calls for the diagnostic. Including transport retries, the separate worst-case bounds are 768 and 120 attempts. Both runners use a 32,000-token input bound, temperature zero, thinking disabled, JSON mode and 12 workers.
+
+For live replay, the following commands copy the cumulative metering state to a writable ledger and use fresh output directories. The diagnostic explicitly reads the archived primary follow-up so its ten cases stay fixed. The shared ¥50 and 2,000-attempt guards apply to the copied ledger and all new requests.
+
+```powershell
+New-Item -ItemType Directory -Path .\runs -Force | Out-Null
+$followupLedger = '.\runs\followup-replay-ledger.jsonl'
+if (Test-Path -LiteralPath $followupLedger) { throw 'Choose a fresh replay ledger path' }
+Copy-Item -LiteralPath .\evidence\deepseek_ledger_combined.jsonl -Destination $followupLedger
+
+& $python run_rescue.py --run --checkpoints-dir .\evidence\formal --ledger $followupLedger --output-dir .\runs\rescue --workers 12 --env-file $keyFile
+& $python run_rescue_diagnostic.py --run --formal-dir .\evidence\formal --rescue-dir .\evidence\rescue --ledger $followupLedger --output-dir .\runs\rescue-diagnostic --workers 12 --env-file $keyFile
+```
+
 ## Read the run outputs
 
 | Path relative to a run directory | Contents |
@@ -89,6 +136,8 @@ Run the pilot first and review its outputs and reserved usage before launching t
 | `trial_<seed>/<ACE arm>/final_playbook.txt` and `selected_playbook.txt` | Learned playbook and the checkpoint used at test time |
 
 Read `runs/pilot/summary.json` and `runs/formal/summary.json` separately. Use `complete_trial_seeds` and the per-arm error and invalid-answer counts to check coverage before comparing arms. The primary metric divides the number of correct tag positions by **192** in each formal arm and trial. Failed and missing positions stay in the denominator. All-four-correct batch accuracy is reported separately.
+
+For the follow-up, `trial_<seed>/paired_rows.jsonl` records the shared control response and any cap-triggered retry. Each primary trial has **256** tag positions per condition. The diagnostic `paired_rows.jsonl` records both caps and their order for every selected case and repeat. Its denominator is **120** positions per cap.
 
 ## Code provenance
 

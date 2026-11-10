@@ -72,6 +72,8 @@ The held-out comparison uses 31 new batches per frozen checkpoint, across seeds 
 
 Answer-only passed the held-out gate with **85.18% fewer completion tokens**. The paired accuracy differences for seeds 17, 29 and 43 were **+1.61, +1.61 and −3.23 percentage points**, with mean 0.00 and sample standard deviation 2.79 percentage points. Answer-only won 15 paired batches, tied 60 and lost 18. The adoption decision applies to the measured inference task and checkpoints. [Held-out evidence](evidence/compact/test_summary.json) · [Run manifest](evidence/compact/run_manifest.json)
 
+For human review, answer-only removes the explanation and the playbook entries the model reports using. The experiment measured label accuracy and efficiency. It did not verify the correctness or usefulness of those explanations and references. The short-rationale candidate retained both fields and used 45.37% fewer completion tokens on the eight development batches. That candidate has development results only. [Development evidence](evidence/compact/dev_summary.json)
+
 This follow-up added **212 settled attempts** and **¥0.6663** in estimated peak-rate usage. The final cumulative snapshot records **1,301 settled attempts** and **¥5.4530**. Its initial 1,089 attempts match the frozen combined ledger byte for byte. [Run summary](evidence/compact/summary.json) · [Final cumulative ledger](evidence/deepseek_ledger_compact.jsonl)
 
 ## Setup on Windows

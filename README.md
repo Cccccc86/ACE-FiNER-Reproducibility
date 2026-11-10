@@ -54,6 +54,26 @@ The larger cap won nine pairs, tied 15 and lost six. The comparison describes a 
 
 The cumulative ledger covers **1,089 attempts** with an estimated **¥4.79** at peak CNY rates across the original and follow-up stages. The original evidence ledger remains the 836-attempt snapshot. The combined ledger includes those exact bytes followed by the primary and diagnostic records. [Combined ledger](evidence/deepseek_ledger_combined.jsonl)
 
+## Compact output follow-up
+
+The third experiment varies only the Generator output instructions and JSON shape at inference, with frozen upstream ACE playbooks. Verbose uses the original prompt. Compact rationale limits the explanation to 40 words and retains the bullet IDs. Answer-only requests one JSON field, `final_answer`, containing four comma-separated tags in question order. All arms use an initial cap of 1,536 completion tokens and retry the same prompt once at 3,072 if the first response ends with `finish_reason=length`. The model, input evidence, playbook and scoring are shared within each comparison. [Runner](run_compact.py) · [Frozen inputs](compact_manifest.json)
+
+The development set uses eight new validation batches and checkpoint seed 29. A candidate must match or exceed verbose in correct tag count, have at most as many incomplete or malformed batches, and save at least 25% of completion tokens including retries. Both arms in a comparison must have zero blocked batches, and the token comparison must have complete usage. The selector ranks passing candidates by correct tags, then by fewer completion tokens. All three development arms scored **28/32 (87.50%)** with zero incomplete, malformed or blocked batches. Completion tokens were **1,792** for verbose, **979** for compact rationale and **375** for answer-only. Both candidates passed and answer-only was selected. [Development evidence](evidence/compact/dev_summary.json)
+
+The held-out comparison uses 31 new batches per frozen checkpoint, across seeds 17, 29 and 43. The manifest froze 32 eligible batches. The runner reserves the final ordered batch `finer:test:000332` before inference so the worst-case plan fits the shared budget. The test applies the same gate to the selected candidate and verbose in aggregate.
+
+| Held-out metric | Verbose | Answer-only |
+|---|---:|---:|
+| Correct tag positions | 269/372 (72.31%) | 269/372 (72.31%) |
+| Completion tokens including retries | 29,663 | 4,396 |
+| Initial / final truncations | 2 / 1 | 0 / 0 |
+| Incomplete / malformed batches | 1 / 0 | 0 / 0 |
+| Output-contract compliant batches | 92/93 | 93/93 |
+
+Answer-only passed the held-out gate with **85.18% fewer completion tokens**. The paired accuracy differences for seeds 17, 29 and 43 were **+1.61, +1.61 and −3.23 percentage points**, with mean 0.00 and sample standard deviation 2.79 percentage points. Answer-only won 15 paired batches, tied 60 and lost 18. The adoption decision applies to the measured inference task and checkpoints. [Held-out evidence](evidence/compact/test_summary.json) · [Run manifest](evidence/compact/run_manifest.json)
+
+This follow-up added **212 settled attempts** and **¥0.6663** in estimated peak-rate usage. The final cumulative snapshot records **1,301 settled attempts** and **¥5.4530**. Its initial 1,089 attempts match the frozen combined ledger byte for byte. [Run summary](evidence/compact/summary.json) · [Final cumulative ledger](evidence/deepseek_ledger_compact.jsonl)
+
 ## Setup on Windows
 
 Run PowerShell from this project directory with Python **3.12**. If `python` points to a different interpreter, substitute the full path to your Python 3.12 executable. The four direct dependencies are pinned in [requirements-repro.txt](requirements-repro.txt).
@@ -124,6 +144,26 @@ Copy-Item -LiteralPath .\evidence\deepseek_ledger_combined.jsonl -Destination $f
 & $python run_rescue_diagnostic.py --run --formal-dir .\evidence\formal --rescue-dir .\evidence\rescue --ledger $followupLedger --output-dir .\runs\rescue-diagnostic --workers 12 --env-file $keyFile
 ```
 
+### Run the compact output follow-up
+
+The dry run verifies the frozen split, prior manifests, prior ledger prefix and archived checkpoints. It reports eight development and 31 test batches, at most 420 logical calls and 840 transport attempts, and a worst-case incremental reservation of **¥44.751488**. The smoke test uses a fake provider and exercises development selection, held-out gating and cap-triggered retry.
+
+```powershell
+& $python -B run_compact.py --dry-run --checkpoints-dir .\evidence\formal --workers 12
+& $python -B run_compact.py --smoke-test
+```
+
+For live replay, start from a writable copy of the 1,089-attempt snapshot, the same starting state as the measured run. The final 1,301-attempt ledger is the record of the completed experiment. The same **¥50** and **2,000-attempt** guards apply to the writable ledger. Requests use DeepSeek Flash with the settings above and 12 workers. Hosted outputs may vary between runs.
+
+```powershell
+New-Item -ItemType Directory -Path .\runs -Force | Out-Null
+$compactLedger = '.\runs\compact-replay-ledger.jsonl'
+if (Test-Path -LiteralPath $compactLedger) { throw 'Choose a fresh replay ledger path' }
+Copy-Item -LiteralPath .\evidence\deepseek_ledger_combined.jsonl -Destination $compactLedger
+
+& $python -B run_compact.py --run --checkpoints-dir .\evidence\formal --ledger $compactLedger --out .\runs\compact --workers 12 --env-file $keyFile
+```
+
 ## Read the run outputs
 
 | Path relative to a run directory | Contents |
@@ -138,6 +178,8 @@ Copy-Item -LiteralPath .\evidence\deepseek_ledger_combined.jsonl -Destination $f
 Read `runs/pilot/summary.json` and `runs/formal/summary.json` separately. Use `complete_trial_seeds` and the per-arm error and invalid-answer counts to check coverage before comparing arms. The primary metric divides the number of correct tag positions by **192** in each formal arm and trial. Failed and missing positions stay in the denominator. All-four-correct batch accuracy is reported separately.
 
 For the follow-up, `trial_<seed>/paired_rows.jsonl` records the shared control response and any cap-triggered retry. Each primary trial has **256** tag positions per condition. The diagnostic `paired_rows.jsonl` records both caps and their order for every selected case and repeat. Its denominator is **120** positions per cap.
+
+The compact output follow-up writes `dev_rows.jsonl` and `test_rows.jsonl` for paired predictions, separate `*_progress.jsonl` logs, and `dev_summary.json` and `test_summary.json` for selection, quality gates and usage. Its test denominator is **124** tag positions per arm and checkpoint.
 
 ## Code provenance
 

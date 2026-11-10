@@ -1,2 +1,4 @@
-# Preserve the source bytes checked by the frozen FiNER manifest.
+# Preserve the source, manifest and ledger bytes checked by frozen SHA-256 digests.
 eval/finance/data/*.jsonl -text
+*_manifest.json -text
+evidence/deepseek_ledger*.jsonl -text

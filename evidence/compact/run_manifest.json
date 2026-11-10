@@ -1,0 +1,144 @@
+{
+  "run_id": "e920913b0ab649c993ee90e24faa5521",
+  "upstream_commit": "82709de050e1db6e6ef2f07bcb0393560b94992a",
+  "model": "deepseek-flash",
+  "base_url": "https://api.deepseek.com",
+  "temperature": 0,
+  "thinking": "disabled",
+  "json_mode": true,
+  "workers": 12,
+  "compact_data_manifest_sha256": "863df77cfac141ae87ac7833397d561b8c5ca9bb8bc800f13ba5dc4468aa6c3d",
+  "split_ids": {
+    "dev": [
+      "finer:val:000147",
+      "finer:val:000069",
+      "finer:val:000037",
+      "finer:val:000342",
+      "finer:val:000470",
+      "finer:val:000278",
+      "finer:val:000148",
+      "finer:val:000302"
+    ],
+    "test": [
+      "finer:test:000020",
+      "finer:test:000262",
+      "finer:test:000126",
+      "finer:test:000241",
+      "finer:test:000381",
+      "finer:test:000409",
+      "finer:test:000336",
+      "finer:test:000028",
+      "finer:test:000293",
+      "finer:test:000001",
+      "finer:test:000400",
+      "finer:test:000423",
+      "finer:test:000059",
+      "finer:test:000019",
+      "finer:test:000179",
+      "finer:test:000364",
+      "finer:test:000104",
+      "finer:test:000244",
+      "finer:test:000218",
+      "finer:test:000103",
+      "finer:test:000303",
+      "finer:test:000344",
+      "finer:test:000380",
+      "finer:test:000433",
+      "finer:test:000143",
+      "finer:test:000189",
+      "finer:test:000393",
+      "finer:test:000373",
+      "finer:test:000355",
+      "finer:test:000236",
+      "finer:test:000242"
+    ]
+  },
+  "frozen_but_unused_test_ids": [
+    "finer:test:000332"
+  ],
+  "checkpoint_sha256": {
+    "17": "849d2a8a1961971618e75ee9dffc54047c04d7bfb84262d9d9d807dc87864b11",
+    "29": "120e03633ae82439ced988466e71715bcf5ca24bab9b6dc7313c8a3283d16be3",
+    "43": "5016af983bcceef0a77b1efcd2e2f43d7eed4ffea87a7065ac65b80e6d913dc1"
+  },
+  "prompt_template_sha256": {
+    "verbose": "d20ecb2668f6078be06cc82be8ef25f813ccd19276305b2a0b86fc299865d103",
+    "compact_rationale": "088c3426f635bc104e7257070f7d26c11a2c55742b45d7eb5d63e00cef60ed63",
+    "answer_only": "90fa9053796595a9d6082fc19e5bff1fe9f65f3f6e4cb7629c4e3d155fae5b91"
+  },
+  "initial_cap": 1536,
+  "rescue_cap": 3072,
+  "rescue_trigger": "finish_reason=length",
+  "maximum_transport_attempts_per_logical_call": 2,
+  "dev_checkpoint": 29,
+  "dev_arms": [
+    "verbose",
+    "compact_rationale",
+    "answer_only"
+  ],
+  "test_arms": [
+    "verbose",
+    "selected_on_dev"
+  ],
+  "output_savings_threshold": 0.25,
+  "capacity_plan": {
+    "dev_policies": 24,
+    "test_policies": 186,
+    "maximum_logical_calls": 420,
+    "maximum_api_attempts": 840,
+    "maximum_input_bound": 21626,
+    "maximum_incremental_reservation_nano_cny": 44751488000,
+    "maximum_incremental_reservation_cny": 44.751488,
+    "dev_by_arm": {
+      "verbose": {
+        "policies": 8,
+        "maximum_input_bound": 17414,
+        "worst_nano_cny": 1681504000
+      },
+      "compact_rationale": {
+        "policies": 8,
+        "maximum_input_bound": 17088,
+        "worst_nano_cny": 1660640000
+      },
+      "answer_only": {
+        "policies": 8,
+        "maximum_input_bound": 16903,
+        "worst_nano_cny": 1648800000
+      }
+    },
+    "test_possible_by_arm": {
+      "verbose": {
+        "policies": 93,
+        "maximum_input_bound": 21626,
+        "worst_nano_cny": 20001544000
+      },
+      "compact_rationale": {
+        "policies": 93,
+        "maximum_input_bound": 21300,
+        "worst_nano_cny": 19759000000
+      },
+      "answer_only": {
+        "policies": 93,
+        "maximum_input_bound": 21115,
+        "worst_nano_cny": 19621360000
+      }
+    }
+  },
+  "shared_budget_before": {
+    "budget_cny": 50.0,
+    "max_attempts": 2000,
+    "attempts": 1089,
+    "settled_attempts": 1089,
+    "unresolved_attempts": 0,
+    "unknown_attempts": 0,
+    "prompt_tokens": 3705821,
+    "completion_tokens": 333150,
+    "prompt_cache_hit_tokens_observed": 2699066,
+    "attempts_without_cache_breakdown": 0,
+    "settled_peak_cost_cny": 4.78667264,
+    "unresolved_reserved_cny": 0.0,
+    "committed_cny": 4.78667264,
+    "remaining_cny": 45.21332736,
+    "usage_bound_violations": 0
+  }
+}

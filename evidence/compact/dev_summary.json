@@ -1,0 +1,154 @@
+{
+  "arms": {
+    "verbose": {
+      "correct_labels": 28,
+      "total_labels": 32,
+      "accuracy": 0.875,
+      "incomplete_batches": 0,
+      "malformed_four_tag_batches": 0,
+      "contract_compliant_batches": 8,
+      "initial_truncations": 0,
+      "final_truncations": 0,
+      "rescue_calls": 0,
+      "blocked_batches": 0,
+      "logical_latency_seconds": 15.565000000060536,
+      "usage_including_retries": {
+        "attempts": 8,
+        "settled_attempts": 8,
+        "prompt_tokens": 30408,
+        "completion_tokens": 1792,
+        "observed_cache_hit_tokens": 26624,
+        "unknown_cache_breakdown_attempts": 0,
+        "settled_peak_cost_nano_cny": 22968960,
+        "unresolved_reserved_nano_cny": 0,
+        "unresolved_attempts": 0,
+        "committed_cny": 0.02296896,
+        "uncached_equivalent_cny_for_settled": 0.075152
+      }
+    },
+    "compact_rationale": {
+      "correct_labels": 28,
+      "total_labels": 32,
+      "accuracy": 0.875,
+      "incomplete_batches": 0,
+      "malformed_four_tag_batches": 0,
+      "contract_compliant_batches": 8,
+      "initial_truncations": 0,
+      "final_truncations": 0,
+      "rescue_calls": 0,
+      "blocked_batches": 0,
+      "logical_latency_seconds": 11.076999999990221,
+      "usage_including_retries": {
+        "attempts": 8,
+        "settled_attempts": 8,
+        "prompt_tokens": 29928,
+        "completion_tokens": 979,
+        "observed_cache_hit_tokens": 19200,
+        "unknown_cache_breakdown_attempts": 0,
+        "settled_peak_cost_nano_cny": 30056000,
+        "unresolved_reserved_nano_cny": 0,
+        "unresolved_attempts": 0,
+        "committed_cny": 0.030056,
+        "uncached_equivalent_cny_for_settled": 0.067688
+      }
+    },
+    "answer_only": {
+      "correct_labels": 28,
+      "total_labels": 32,
+      "accuracy": 0.875,
+      "incomplete_batches": 0,
+      "malformed_four_tag_batches": 0,
+      "contract_compliant_batches": 8,
+      "initial_truncations": 0,
+      "final_truncations": 0,
+      "rescue_calls": 0,
+      "blocked_batches": 0,
+      "logical_latency_seconds": 10.25199999997858,
+      "usage_including_retries": {
+        "attempts": 8,
+        "settled_attempts": 8,
+        "prompt_tokens": 29560,
+        "completion_tokens": 375,
+        "observed_cache_hit_tokens": 16000,
+        "unknown_cache_breakdown_attempts": 0,
+        "settled_peak_cost_nano_cny": 30760000,
+        "unresolved_reserved_nano_cny": 0,
+        "unresolved_attempts": 0,
+        "committed_cny": 0.03076,
+        "uncached_equivalent_cny_for_settled": 0.06212
+      }
+    }
+  },
+  "selection": {
+    "selected": "answer_only",
+    "dev_gate_passed": true,
+    "exploratory_only": false,
+    "candidate_gates": {
+      "compact_rationale": {
+        "passed": true,
+        "checks": {
+          "no_label_loss": true,
+          "no_extra_incomplete": true,
+          "no_extra_malformed": true,
+          "no_blocked": true,
+          "output_tokens_saved_at_least_25_percent": true
+        },
+        "completion_token_savings_fraction": 0.4536830357142857,
+        "completion_token_comparison_complete": true
+      },
+      "answer_only": {
+        "passed": true,
+        "checks": {
+          "no_label_loss": true,
+          "no_extra_incomplete": true,
+          "no_extra_malformed": true,
+          "no_blocked": true,
+          "output_tokens_saved_at_least_25_percent": true
+        },
+        "completion_token_savings_fraction": 0.7907366071428572,
+        "completion_token_comparison_complete": true
+      }
+    }
+  },
+  "usage_by_trial_phase": [
+    {
+      "trial": 29,
+      "arm": "ace_output_rescue",
+      "phase": "dev.answer_only.initial",
+      "attempts": 8,
+      "settled_attempts": 8,
+      "prompt_tokens": 29560,
+      "completion_tokens": 375,
+      "observed_cache_hit_tokens": 16000,
+      "unknown_cache_breakdown_attempts": 0,
+      "settled_peak_cost_nano_cny": 30760000,
+      "unresolved_reserved_nano_cny": 0
+    },
+    {
+      "trial": 29,
+      "arm": "ace_output_rescue",
+      "phase": "dev.compact_rationale.initial",
+      "attempts": 8,
+      "settled_attempts": 8,
+      "prompt_tokens": 29928,
+      "completion_tokens": 979,
+      "observed_cache_hit_tokens": 19200,
+      "unknown_cache_breakdown_attempts": 0,
+      "settled_peak_cost_nano_cny": 30056000,
+      "unresolved_reserved_nano_cny": 0
+    },
+    {
+      "trial": 29,
+      "arm": "ace_output_rescue",
+      "phase": "dev.verbose.initial",
+      "attempts": 8,
+      "settled_attempts": 8,
+      "prompt_tokens": 30408,
+      "completion_tokens": 1792,
+      "observed_cache_hit_tokens": 26624,
+      "unknown_cache_breakdown_attempts": 0,
+      "settled_peak_cost_nano_cny": 22968960,
+      "unresolved_reserved_nano_cny": 0
+    }
+  ]
+}

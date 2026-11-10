@@ -1,0 +1,126 @@
+{
+  "pooled": {
+    "denominator": 768,
+    "arms": {
+      "base": {
+        "correct": 620,
+        "status": {
+          "scored": 190,
+          "TruncatedCompletion": 2
+        }
+      },
+      "ace_upstream": {
+        "correct": 658,
+        "status": {
+          "scored": 192
+        }
+      }
+    },
+    "delta_pp": 4.947916666666667
+  },
+  "both_complete": {
+    "denominator": 760,
+    "arms": {
+      "base": {
+        "correct": 620,
+        "status": {
+          "scored": 190
+        }
+      },
+      "ace_upstream": {
+        "correct": 652,
+        "status": {
+          "scored": 190
+        }
+      }
+    },
+    "delta_pp": 4.2105263157894735
+  },
+  "trials": {
+    "17": {
+      "denominator": 256,
+      "arms": {
+        "base": {
+          "correct": 208,
+          "status": {
+            "scored": 64
+          }
+        },
+        "ace_upstream": {
+          "correct": 219,
+          "status": {
+            "scored": 64
+          }
+        }
+      },
+      "delta_pp": 4.296875
+    },
+    "29": {
+      "denominator": 256,
+      "arms": {
+        "base": {
+          "correct": 207,
+          "status": {
+            "scored": 63,
+            "TruncatedCompletion": 1
+          }
+        },
+        "ace_upstream": {
+          "correct": 217,
+          "status": {
+            "scored": 64
+          }
+        }
+      },
+      "delta_pp": 3.90625
+    },
+    "43": {
+      "denominator": 256,
+      "arms": {
+        "base": {
+          "correct": 205,
+          "status": {
+            "scored": 63,
+            "TruncatedCompletion": 1
+          }
+        },
+        "ace_upstream": {
+          "correct": 222,
+          "status": {
+            "scored": 64
+          }
+        }
+      },
+      "delta_pp": 6.640625
+    }
+  },
+  "base_ace_correct_transitions": {
+    "00": 80,
+    "01": 68,
+    "10": 30,
+    "11": 590
+  },
+  "paired_batch_bootstrap_95pct_delta_pp": [
+    0.26041666666666663,
+    10.15625
+  ],
+  "usage": {
+    "ledger_path": "C:\\Users\\lenovo\\Documents\\Codex\\2026-09-28\\zhe\\work\\ace_finer_experiment\\confirm_100\\usage.jsonl",
+    "budget_cny": 22.44066712,
+    "max_attempts": 768,
+    "attempts": 384,
+    "settled_attempts": 384,
+    "unresolved_attempts": 0,
+    "unknown_attempts": 0,
+    "prompt_tokens": 3689170,
+    "completion_tokens": 89757,
+    "prompt_cache_hit_tokens_observed": 3499880,
+    "attempts_without_cache_breakdown": 0,
+    "settled_peak_cost_cny": 1.2366312,
+    "unresolved_reserved_cny": 0.0,
+    "committed_cny": 1.2366312,
+    "remaining_cny": 21.20403592,
+    "usage_bound_violations": 0
+  },
+  "status": "complete"
+}

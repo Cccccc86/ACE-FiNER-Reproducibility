@@ -1,0 +1,7 @@
+{
+  "seed": 17,
+  "resume_at_step": 42,
+  "initial_cap": 1536,
+  "truncation_retry_cap": 3072,
+  "scope": "training only"
+}

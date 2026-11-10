@@ -1,0 +1,227 @@
+{
+  "primary": {
+    "positions": 768,
+    "arms": {
+      "base": {
+        "correct": 610,
+        "statuses": {
+          "scored": 189,
+          "TruncatedCompletion": 3
+        }
+      },
+      "ace_24": {
+        "correct": 610,
+        "statuses": {
+          "scored": 189,
+          "TruncatedCompletion": 3
+        },
+        "base_right_to_wrong": 40,
+        "base_wrong_to_right": 40
+      },
+      "ace_48": {
+        "correct": 607,
+        "statuses": {
+          "scored": 190,
+          "TruncatedCompletion": 2
+        },
+        "base_right_to_wrong": 50,
+        "base_wrong_to_right": 47
+      },
+      "ace_100": {
+        "correct": 624,
+        "statuses": {
+          "scored": 191,
+          "TruncatedCompletion": 1
+        },
+        "base_right_to_wrong": 40,
+        "base_wrong_to_right": 54
+      }
+    },
+    "bootstrap_95pct_difference_vs_24_pp": {
+      "48": [
+        -4.036458333333333,
+        3.5156250000000004
+      ],
+      "100": [
+        -1.4322916666666663,
+        5.208333333333333
+      ]
+    }
+  },
+  "all_four_complete": {
+    "positions": 740,
+    "arms": {
+      "base": {
+        "correct": 598,
+        "statuses": {
+          "scored": 185
+        }
+      },
+      "ace_24": {
+        "correct": 597,
+        "statuses": {
+          "scored": 185
+        },
+        "base_right_to_wrong": 36,
+        "base_wrong_to_right": 35
+      },
+      "ace_48": {
+        "correct": 588,
+        "statuses": {
+          "scored": 185
+        },
+        "base_right_to_wrong": 46,
+        "base_wrong_to_right": 36
+      },
+      "ace_100": {
+        "correct": 604,
+        "statuses": {
+          "scored": 185
+        },
+        "base_right_to_wrong": 37,
+        "base_wrong_to_right": 43
+      }
+    }
+  },
+  "trials": {
+    "17": {
+      "positions": 256,
+      "arms": {
+        "base": {
+          "correct": 199,
+          "statuses": {
+            "scored": 63,
+            "TruncatedCompletion": 1
+          }
+        },
+        "ace_24": {
+          "correct": 202,
+          "statuses": {
+            "scored": 63,
+            "TruncatedCompletion": 1
+          },
+          "base_right_to_wrong": 13,
+          "base_wrong_to_right": 16
+        },
+        "ace_48": {
+          "correct": 209,
+          "statuses": {
+            "scored": 64
+          },
+          "base_right_to_wrong": 11,
+          "base_wrong_to_right": 21
+        },
+        "ace_100": {
+          "correct": 206,
+          "statuses": {
+            "scored": 63,
+            "TruncatedCompletion": 1
+          },
+          "base_right_to_wrong": 11,
+          "base_wrong_to_right": 18
+        }
+      }
+    },
+    "29": {
+      "positions": 256,
+      "arms": {
+        "base": {
+          "correct": 202,
+          "statuses": {
+            "scored": 62,
+            "TruncatedCompletion": 2
+          }
+        },
+        "ace_24": {
+          "correct": 200,
+          "statuses": {
+            "scored": 63,
+            "TruncatedCompletion": 1
+          },
+          "base_right_to_wrong": 14,
+          "base_wrong_to_right": 12
+        },
+        "ace_48": {
+          "correct": 194,
+          "statuses": {
+            "scored": 62,
+            "TruncatedCompletion": 2
+          },
+          "base_right_to_wrong": 21,
+          "base_wrong_to_right": 13
+        },
+        "ace_100": {
+          "correct": 208,
+          "statuses": {
+            "scored": 64
+          },
+          "base_right_to_wrong": 13,
+          "base_wrong_to_right": 19
+        }
+      }
+    },
+    "43": {
+      "positions": 256,
+      "arms": {
+        "base": {
+          "correct": 209,
+          "statuses": {
+            "scored": 64
+          }
+        },
+        "ace_24": {
+          "correct": 208,
+          "statuses": {
+            "scored": 63,
+            "TruncatedCompletion": 1
+          },
+          "base_right_to_wrong": 13,
+          "base_wrong_to_right": 12
+        },
+        "ace_48": {
+          "correct": 204,
+          "statuses": {
+            "scored": 64
+          },
+          "base_right_to_wrong": 18,
+          "base_wrong_to_right": 13
+        },
+        "ace_100": {
+          "correct": 210,
+          "statuses": {
+            "scored": 64
+          },
+          "base_right_to_wrong": 16,
+          "base_wrong_to_right": 17
+        }
+      }
+    }
+  },
+  "test_prompt_tokens": {
+    "base": 431127,
+    "ace_24": 1098775,
+    "ace_48": 1691671,
+    "ace_100": 3245143
+  },
+  "observed_fingerprints": [
+    "bc19ba97cbe016479903222bb1578db6"
+  ],
+  "usage": {
+    "ledger_path": "C:\\Users\\lenovo\\Documents\\Codex\\2026-09-28\\zhe\\work\\ace_finer_experiment\\training_scale\\usage.jsonl",
+    "budget_cny": 38.94574496,
+    "max_attempts": 13848,
+    "attempts": 1810,
+    "settled_attempts": 1807,
+    "unresolved_attempts": 3,
+    "unknown_attempts": 3,
+    "prompt_tokens": 15858506,
+    "completion_tokens": 518165,
+    "prompt_cache_hit_tokens_observed": 10060146,
+    "attempts_without_cache_breakdown": 0,
+    "settled_peak_cost_cny": 16.14444584,
+    "unresolved_reserved_cny": 0.360632,
+    "committed_cny": 16.50507784,
+    "remaining_cny": 22.44066712,
+    "usage_bound_violations": 0
+  }
+}

@@ -2,3 +2,5 @@
 eval/finance/data/*.jsonl -text
 *_manifest.json -text
 evidence/deepseek_ledger*.jsonl -text
+evidence/**/*.jsonl -text
+evidence/** whitespace=cr-at-eol
